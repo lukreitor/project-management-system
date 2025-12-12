@@ -1,4 +1,5 @@
 import { Project } from '@/types';
+import ProjectProgress from './ProjectProgress';
 
 interface ProjectCardProps {
   project: Project;
@@ -15,21 +16,10 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold">{project.name}</h3>
         </div>
-        
+
         <div className="space-y-3">
-          <div>
-            <div className="flex justify-between items-center text-sm mb-1">
-              <span className="text-muted-foreground">Progress</span>
-              <span className="font-medium">{project.progress.toFixed(1)}%</span>
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2">
-              <div
-                className="bg-primary h-2 rounded-full transition-all"
-                style={{ width: `${project.progress}%` }}
-              />
-            </div>
-          </div>
-          
+          <ProjectProgress progress={project.progress} size="sm" />
+
           <div className="text-xs text-muted-foreground">
             Created {new Date(project.created_at).toLocaleDateString()}
           </div>
