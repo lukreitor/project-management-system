@@ -11,7 +11,6 @@ class ProjectResource extends JsonResource
     public function toArray(Request $request): array
     {
         $progressService = app(ProgressCalculationService::class);
-        $this->resource->load('tasks');
 
         $progress = $progressService->calculateProgress($this->resource);
 

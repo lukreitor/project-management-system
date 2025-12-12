@@ -18,7 +18,9 @@ class ProjectController extends Controller
     }
     public function index(): AnonymousResourceCollection
     {
-        $projects = Project::all();
+        $projects = Project::with('tasks')
+            ->latest()
+            ->get();
 
         return ProjectResource::collection($projects);
     }
@@ -34,6 +36,8 @@ class ProjectController extends Controller
 
     public function show(Project $project): ProjectResource
     {
+        $project->load('tasks');
+
         return new ProjectResource($project);
     }
 }
