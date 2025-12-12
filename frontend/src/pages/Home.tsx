@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Project } from '@/types';
 import { projectService } from '@/services/projects';
 import ProjectList from '@/components/projects/ProjectList';
 import CreateProjectForm from '@/components/projects/CreateProjectForm';
 
 export default function Home() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +34,10 @@ export default function Home() {
     await fetchProjects();
   };
 
+  const handleProjectClick = (project: Project) => {
+    navigate(`/projects/${project.id}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -57,7 +63,7 @@ export default function Home() {
       )}
 
       {!isLoading && !error && (
-        <ProjectList projects={projects} />
+        <ProjectList projects={projects} onProjectClick={handleProjectClick} />
       )}
     </div>
   );
