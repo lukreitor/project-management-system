@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import ProjectProgress from '@/components/projects/ProjectProgress';
 import TaskList from '@/components/tasks/TaskList';
 import CreateTaskForm from '@/components/tasks/CreateTaskForm';
+import { LoadingState } from '@/components/ui/spinner';
 import { ArrowLeft } from 'lucide-react';
 
 export default function ProjectDetails() {
@@ -58,11 +59,7 @@ export default function ProjectDetails() {
   };
 
   if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Loading project...</p>
-      </div>
-    );
+    return <LoadingState message="Loading project..." />;
   }
 
   if (error || !project) {
