@@ -21,6 +21,10 @@ class Task extends Model
         'completed' => 'boolean',
     ];
 
+    protected $attributes = [
+        'completed' => false,
+    ];
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
