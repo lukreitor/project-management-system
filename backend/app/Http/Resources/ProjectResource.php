@@ -22,6 +22,15 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'progress' => (double) $progress,
+            'tasks' => $this->tasks->map(fn($task) => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'completed' => $task->completed,
+                'difficulty' => $task->difficulty,
+                'project_id' => $task->project_id,
+                'created_at' => $task->created_at,
+                'updated_at' => $task->updated_at,
+            ]),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
