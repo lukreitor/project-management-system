@@ -42,10 +42,10 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Projects</h1>
-          <p className="text-muted-foreground mt-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">Projects</h1>
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
             Manage your projects and tasks with weighted progress calculation
           </p>
         </div>

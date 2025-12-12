@@ -22,16 +22,16 @@ const difficultyLabels = {
 
 export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
   return (
-    <div className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
       <input
         type="checkbox"
         checked={task.completed}
         onChange={() => onToggle(task.id)}
-        className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary cursor-pointer"
+        className="h-4 w-4 sm:h-5 sm:w-5 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary cursor-pointer flex-shrink-0"
       />
 
       <div className="flex-1 min-w-0">
-        <p className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
+        <p className={`text-sm sm:text-base font-medium break-words ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
           {task.title}
         </p>
         <div className="flex items-center gap-2 mt-1">
@@ -45,7 +45,7 @@ export default function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
         variant="ghost"
         size="icon"
         onClick={() => onDelete(task.id)}
-        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+        className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
       >
         <Trash2 className="h-4 w-4" />
       </Button>

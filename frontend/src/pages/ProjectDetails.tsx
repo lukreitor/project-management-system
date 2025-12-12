@@ -100,25 +100,25 @@ export default function ProjectDetails() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{project.name}</h1>
-          <p className="text-muted-foreground mt-1">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">{project.name}</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
             Created {new Date(project.created_at).toLocaleDateString()}
           </p>
         </div>
       </div>
 
-      <div className="max-w-md">
+      <div className="w-full sm:max-w-md">
         <ProjectProgress progress={project.progress} size="lg" />
       </div>
 
       <div className="border-t pt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Tasks</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <h2 className="text-xl sm:text-2xl font-semibold">Tasks</h2>
           <CreateTaskForm projectId={project.id} onSubmit={handleCreateTask} />
         </div>
 
