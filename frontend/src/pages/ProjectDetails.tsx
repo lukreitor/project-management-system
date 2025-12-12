@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Project, Task } from '@/types';
+import { Project } from '@/types';
 import { projectService } from '@/services/projects';
 import { taskService } from '@/services/tasks';
 import { Button } from '@/components/ui/button';

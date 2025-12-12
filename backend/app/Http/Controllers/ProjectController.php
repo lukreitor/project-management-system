@@ -5,17 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
-use App\Services\ProgressCalculationService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProjectController extends Controller
 {
-    public function __construct(
-        private ProgressCalculationService $progressCalculationService
-    ) {
-    }
 
     /**
      * Get all projects with their tasks and calculated progress.
