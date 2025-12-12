@@ -22,4 +22,14 @@ class TaskController extends Controller
             'data' => $task
         ], 201);
     }
+
+    public function toggle(Task $task): JsonResponse
+    {
+        $task->completed = !$task->completed;
+        $task->save();
+
+        return response()->json([
+            'data' => $task
+        ]);
+    }
 }
