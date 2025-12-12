@@ -16,4 +16,8 @@ export const projectService = {
     const response = await api.post<ApiResponse<Project>>('/projects', data);
     return response.data.data;
   },
+
+  async delete(id: number): Promise<void> {
+    await api.delete(`/projects/${id}`);
+  },
 };

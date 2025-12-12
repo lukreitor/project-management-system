@@ -44,6 +44,17 @@ The project progress is calculated using a weighted system:
 
 Progress is calculated as the percentage of completed effort points relative to total effort points across all tasks in a project.
 
+## Screenshots
+
+![Project List](images/Captura%20de%20tela%202025-12-12%20095050.png)
+*Project list with weighted progress bars*
+
+![Project Details](images/Captura%20de%20tela%202025-12-12%20095100.png)
+*Project details with task management*
+
+![Task Creation](images/Captura%20de%20tela%202025-12-12%20095123.png)
+*Create task modal with difficulty selection*
+
 ## Installation and Setup
 
 ### Prerequisites

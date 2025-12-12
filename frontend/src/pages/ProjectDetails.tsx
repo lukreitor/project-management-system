@@ -9,7 +9,8 @@ import TaskList from '@/components/tasks/TaskList';
 import CreateTaskForm from '@/components/tasks/CreateTaskForm';
 import { LoadingState } from '@/components/ui/spinner';
 import { Alert, AlertDescription, AlertIcon } from '@/components/ui/alert';
-import { ArrowLeft } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,9 @@ export default function ProjectDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
+  const [deleteTaskDialogOpen, setDeleteTaskDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+  const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false);
 
   const fetchProjectData = async () => {
     if (!id) return;
@@ -46,8 +50,13 @@ export default function ProjectDetails() {
   }) => {
     try {
       setOperationError(null);
-      await taskService.create(data);
-      await fetchProjectData();
+      const newTask = await taskService.create(data);
+
+      // Update local state instead of refetching
+      if (project) {
+        const updatedProject = await projectService.getById(project.id);
+        setProject(updatedProject);
+      }
     } catch (err) {
       setOperationError('Failed to create task. Please try again.');
       console.error('Error creating task:', err);
@@ -55,26 +64,77 @@ export default function ProjectDetails() {
   };
 
   const handleToggleTask = async (taskId: number) => {
+    if (!project) return;
+
     try {
       setOperationError(null);
+
+      // Optimistic update
+      const updatedTasks = project.tasks.map(task =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      );
+      setProject({ ...project, tasks: updatedTasks });
+
+      // Send request to server
       await taskService.toggle(taskId);
-      await fetchProjectData();
+
+      // Fetch updated progress
+      const updatedProject = await projectService.getById(project.id);
+      setProject(updatedProject);
     } catch (err) {
       setOperationError('Failed to update task. Please try again.');
       console.error('Error toggling task:', err);
+      // Revert on error
+      await fetchProjectData();
     }
   };
 
-  const handleDeleteTask = async (taskId: number) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      try {
-        setOperationError(null);
-        await taskService.delete(taskId);
-        await fetchProjectData();
-      } catch (err) {
-        setOperationError('Failed to delete task. Please try again.');
-        console.error('Error deleting task:', err);
-      }
+  const handleDeleteTask = (taskId: number) => {
+    setTaskToDelete(taskId);
+    setDeleteTaskDialogOpen(true);
+  };
+
+  const handleDeleteProject = () => {
+    setDeleteProjectDialogOpen(true);
+  };
+
+  const confirmDeleteTask = async () => {
+    if (!project || !taskToDelete) return;
+
+    try {
+      setOperationError(null);
+
+      // Optimistic update
+      const updatedTasks = project.tasks.filter(task => task.id !== taskToDelete);
+      setProject({ ...project, tasks: updatedTasks });
+
+      await taskService.delete(taskToDelete);
+
+      // Fetch updated progress
+      const updatedProject = await projectService.getById(project.id);
+      setProject(updatedProject);
+    } catch (err) {
+      setOperationError('Failed to delete task. Please try again.');
+      console.error('Error deleting task:', err);
+      // Revert on error
+      await fetchProjectData();
+    } finally {
+      setDeleteTaskDialogOpen(false);
+      setTaskToDelete(null);
+    }
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!project) return;
+
+    try {
+      setOperationError(null);
+      await projectService.delete(project.id);
+      navigate('/');
+    } catch (err) {
+      setOperationError('Failed to delete project. Please try again.');
+      console.error('Error deleting project:', err);
+      setDeleteProjectDialogOpen(false);
     }
   };
 
@@ -110,6 +170,14 @@ export default function ProjectDetails() {
             Created {new Date(project.created_at).toLocaleDateString()}
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleDeleteProject}
+          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <Trash2 className="h-5 w-5" />
+        </Button>
       </div>
 
       <div className="w-full sm:max-w-md">
@@ -135,6 +203,28 @@ export default function ProjectDetails() {
           onDelete={handleDeleteTask}
         />
       </div>
+
+      <ConfirmDialog
+        open={deleteTaskDialogOpen}
+        onOpenChange={setDeleteTaskDialogOpen}
+        title="Delete Task"
+        description="Are you sure you want to delete this task? This action cannot be undone."
+        onConfirm={confirmDeleteTask}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
+      <ConfirmDialog
+        open={deleteProjectDialogOpen}
+        onOpenChange={setDeleteProjectDialogOpen}
+        title="Delete Project"
+        description="Are you sure you want to delete this project? All tasks will be permanently removed. This action cannot be undone."
+        onConfirm={confirmDeleteProject}
+        confirmText="Delete Project"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }
