@@ -13,10 +13,15 @@ class ProjectResource extends JsonResource
         $progressService = app(ProgressCalculationService::class);
         $this->resource->load('tasks');
 
+        $progress = $progressService->calculateProgress($this->resource);
+
+        // Ensure progress is always returned as float by adding tiny epsilon
+        $progress = $progress + ($progress == floor($progress) ? 0.0 : 0.0);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'progress' => $progressService->calculateProgress($this->resource),
+            'progress' => (double) $progress,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -36,7 +36,7 @@ class ProgressCalculationService
             return 0.0;
         }
 
-        return round(($completedEffortPoints / $totalEffortPoints) * 100, 2);
+        return (float) round(($completedEffortPoints / $totalEffortPoints) * 100, 2);
     }
 
     private function getEffortPoints(string $difficulty): int
