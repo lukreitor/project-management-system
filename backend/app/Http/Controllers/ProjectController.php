@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Services\ProgressCalculationService;
@@ -22,13 +23,9 @@ class ProjectController extends Controller
         return ProjectResource::collection($projects);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreProjectRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        $project = Project::create($validated);
+        $project = Project::create($request->validated());
 
         return response()->json([
             'data' => $project
