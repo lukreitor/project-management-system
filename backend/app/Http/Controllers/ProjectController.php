@@ -16,6 +16,12 @@ class ProjectController extends Controller
         private ProgressCalculationService $progressCalculationService
     ) {
     }
+
+    /**
+     * Get all projects with their tasks and calculated progress.
+     *
+     * @return AnonymousResourceCollection Collection of projects ordered by newest first
+     */
     public function index(): AnonymousResourceCollection
     {
         $projects = Project::with('tasks')
@@ -25,6 +31,12 @@ class ProjectController extends Controller
         return ProjectResource::collection($projects);
     }
 
+    /**
+     * Create a new project.
+     *
+     * @param StoreProjectRequest $request Validated request containing project name
+     * @return JsonResponse Created project data with 201 status
+     */
     public function store(StoreProjectRequest $request): JsonResponse
     {
         $project = Project::create($request->validated());
@@ -34,6 +46,12 @@ class ProjectController extends Controller
         ], 201);
     }
 
+    /**
+     * Get a single project with its tasks and calculated progress.
+     *
+     * @param Project $project The project model instance (route model binding)
+     * @return ProjectResource Project data with tasks and weighted progress
+     */
     public function show(Project $project): ProjectResource
     {
         $project->load('tasks');
