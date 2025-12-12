@@ -1,0 +1,69 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Project } from '@/types';
+import { projectService } from '@/services/projects';
+import ProjectList from '@/components/projects/ProjectList';
+import CreateProjectForm from '@/components/projects/CreateProjectForm';
+import { LoadingState } from '@/components/ui/spinner';
+import { Alert, AlertDescription, AlertIcon } from '@/components/ui/alert';
+
+export default function Home() {
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProjects = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await projectService.getAll();
+      setProjects(data);
+    } catch (err) {
+      setError('Failed to load projects');
+      console.error('Error fetching projects:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleCreateProject = async (data: { name: string }) => {
+    await projectService.create(data);
+    await fetchProjects();
+  };
+
+  const handleProjectClick = (project: Project) => {
+    navigate(`/projects/${project.id}`);
+  };
+
+  return (
+    <div className="space-y-6 animate-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">Projects</h1>
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+            Manage your projects and tasks with weighted progress calculation
+          </p>
+        </div>
+        <CreateProjectForm onSubmit={handleCreateProject} />
+      </div>
+
+      {isLoading && <LoadingState message="Loading projects..." />}
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertIcon variant="destructive" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {!isLoading && !error && (
+        <ProjectList projects={projects} onProjectClick={handleProjectClick} />
+      )}
+    </div>
+  );
+}
