@@ -99,7 +99,7 @@ export default function ProjectDetails() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in">
       <div className="flex items-center gap-2 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
           <ArrowLeft className="h-5 w-5" />
