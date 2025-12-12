@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Services\ProgressCalculationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProjectController extends Controller
 {
-    public function index(): JsonResponse
+    public function __construct(
+        private ProgressCalculationService $progressCalculationService
+    ) {
+    }
+    public function index(): AnonymousResourceCollection
     {
         $projects = Project::all();
 
-        return response()->json([
-            'data' => $projects
-        ]);
+        return ProjectResource::collection($projects);
     }
 
     public function store(Request $request): JsonResponse
@@ -28,5 +33,10 @@ class ProjectController extends Controller
         return response()->json([
             'data' => $project
         ], 201);
+    }
+
+    public function show(Project $project): ProjectResource
+    {
+        return new ProjectResource($project);
     }
 }
