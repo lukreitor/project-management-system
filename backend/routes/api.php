@@ -11,6 +11,7 @@ Route::get('/health', function () {
 
 Route::get('/projects', [ProjectController::class, 'index']);
 Route::post('/projects', [ProjectController::class, 'store']);
+Route::get('/projects/{project}', [ProjectController::class, 'show']);
 
 Route::post('/tasks', [TaskController::class, 'store']);
 Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle']);
