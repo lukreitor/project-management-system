@@ -20,18 +20,38 @@ export default function CreateProjectForm({ onSubmit }: CreateProjectFormProps) 
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const MAX_LENGTH = 255;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!name.trim()) return;
-    
+
+    setError(null);
+
+    if (!name.trim()) {
+      setError('Project name is required');
+      return;
+    }
+
+    if (name.trim().length < 3) {
+      setError('Project name must be at least 3 characters');
+      return;
+    }
+
+    if (name.length > MAX_LENGTH) {
+      setError(`Project name must not exceed ${MAX_LENGTH} characters`);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await onSubmit({ name: name.trim() });
       setName('');
+      setError(null);
       setOpen(false);
     } catch (error) {
+      setError('Failed to create project. Please try again.');
       console.error('Error creating project:', error);
     } finally {
       setIsSubmitting(false);
@@ -60,7 +80,17 @@ export default function CreateProjectForm({ onSubmit }: CreateProjectFormProps) 
               onChange={(e) => setName(e.target.value)}
               disabled={isSubmitting}
               required
+              maxLength={MAX_LENGTH}
+              className={error ? 'border-destructive' : ''}
             />
+            <div className="flex justify-between items-center">
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+              <p className="text-xs text-muted-foreground ml-auto">
+                {name.length}/{MAX_LENGTH}
+              </p>
+            </div>
           </div>
           <div className="flex justify-end gap-3">
             <Button

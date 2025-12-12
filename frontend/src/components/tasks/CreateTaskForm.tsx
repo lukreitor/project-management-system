@@ -30,11 +30,29 @@ export default function CreateTaskForm({ projectId, onSubmit }: CreateTaskFormPr
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState<'low' | 'medium' | 'high'>('medium');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const MAX_LENGTH = 255;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) return;
+    setError(null);
+
+    if (!title.trim()) {
+      setError('Task title is required');
+      return;
+    }
+
+    if (title.trim().length < 3) {
+      setError('Task title must be at least 3 characters');
+      return;
+    }
+
+    if (title.length > MAX_LENGTH) {
+      setError(`Task title must not exceed ${MAX_LENGTH} characters`);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -45,8 +63,10 @@ export default function CreateTaskForm({ projectId, onSubmit }: CreateTaskFormPr
       });
       setTitle('');
       setDifficulty('medium');
+      setError(null);
       setOpen(false);
     } catch (error) {
+      setError('Failed to create task. Please try again.');
       console.error('Error creating task:', error);
     } finally {
       setIsSubmitting(false);
@@ -78,7 +98,17 @@ export default function CreateTaskForm({ projectId, onSubmit }: CreateTaskFormPr
               onChange={(e) => setTitle(e.target.value)}
               disabled={isSubmitting}
               required
+              maxLength={MAX_LENGTH}
+              className={error ? 'border-destructive' : ''}
             />
+            <div className="flex justify-between items-center">
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+              <p className="text-xs text-muted-foreground ml-auto">
+                {title.length}/{MAX_LENGTH}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-2">
