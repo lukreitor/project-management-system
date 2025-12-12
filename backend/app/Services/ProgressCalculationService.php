@@ -14,7 +14,29 @@ class ProgressCalculationService
 
     public function calculateProgress(Project $project): float
     {
-        return 0.0;
+        $tasks = $project->tasks;
+
+        if ($tasks->isEmpty()) {
+            return 0.0;
+        }
+
+        $totalEffortPoints = 0;
+        $completedEffortPoints = 0;
+
+        foreach ($tasks as $task) {
+            $effortPoints = $this->getEffortPoints($task->difficulty);
+            $totalEffortPoints += $effortPoints;
+
+            if ($task->completed) {
+                $completedEffortPoints += $effortPoints;
+            }
+        }
+
+        if ($totalEffortPoints === 0) {
+            return 0.0;
+        }
+
+        return round(($completedEffortPoints / $totalEffortPoints) * 100, 2);
     }
 
     private function getEffortPoints(string $difficulty): int
