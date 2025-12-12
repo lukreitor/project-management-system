@@ -1,0 +1,16 @@
+/vendor/
+/node_modules/
+/.idea/
+/.vscode/
+/.claude/
+INSTRUCTIONS.md
+requirements.txt
+.DS_Store
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+*.log
