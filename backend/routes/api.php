@@ -14,3 +14,4 @@ Route::post('/projects', [ProjectController::class, 'store']);
 
 Route::post('/tasks', [TaskController::class, 'store']);
 Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle']);
+Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
