@@ -8,6 +8,7 @@ import ProjectProgress from '@/components/projects/ProjectProgress';
 import TaskList from '@/components/tasks/TaskList';
 import CreateTaskForm from '@/components/tasks/CreateTaskForm';
 import { LoadingState } from '@/components/ui/spinner';
+import { Alert, AlertDescription, AlertIcon } from '@/components/ui/alert';
 import { ArrowLeft } from 'lucide-react';
 
 export default function ProjectDetails() {
@@ -16,6 +17,7 @@ export default function ProjectDetails() {
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [operationError, setOperationError] = useState<string | null>(null);
 
   const fetchProjectData = async () => {
     if (!id) return;
@@ -42,19 +44,37 @@ export default function ProjectDetails() {
     difficulty: 'low' | 'medium' | 'high';
     project_id: number;
   }) => {
-    await taskService.create(data);
-    await fetchProjectData();
+    try {
+      setOperationError(null);
+      await taskService.create(data);
+      await fetchProjectData();
+    } catch (err) {
+      setOperationError('Failed to create task. Please try again.');
+      console.error('Error creating task:', err);
+    }
   };
 
   const handleToggleTask = async (taskId: number) => {
-    await taskService.toggle(taskId);
-    await fetchProjectData();
+    try {
+      setOperationError(null);
+      await taskService.toggle(taskId);
+      await fetchProjectData();
+    } catch (err) {
+      setOperationError('Failed to update task. Please try again.');
+      console.error('Error toggling task:', err);
+    }
   };
 
   const handleDeleteTask = async (taskId: number) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      await taskService.delete(taskId);
-      await fetchProjectData();
+      try {
+        setOperationError(null);
+        await taskService.delete(taskId);
+        await fetchProjectData();
+      } catch (err) {
+        setOperationError('Failed to delete task. Please try again.');
+        console.error('Error deleting task:', err);
+      }
     }
   };
 
@@ -64,11 +84,16 @@ export default function ProjectDetails() {
 
   if (error || !project) {
     return (
-      <div className="text-center py-12">
-        <p className="text-destructive">{error || 'Project not found'}</p>
-        <Button onClick={() => navigate('/')} className="mt-4">
-          Go Back
-        </Button>
+      <div className="space-y-4">
+        <Alert variant="destructive">
+          <AlertIcon variant="destructive" />
+          <AlertDescription>{error || 'Project not found'}</AlertDescription>
+        </Alert>
+        <div className="flex justify-center">
+          <Button onClick={() => navigate('/')}>
+            Go Back
+          </Button>
+        </div>
       </div>
     );
   }
@@ -96,6 +121,13 @@ export default function ProjectDetails() {
           <h2 className="text-2xl font-semibold">Tasks</h2>
           <CreateTaskForm projectId={project.id} onSubmit={handleCreateTask} />
         </div>
+
+        {operationError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertIcon variant="destructive" />
+            <AlertDescription>{operationError}</AlertDescription>
+          </Alert>
+        )}
 
         <TaskList
           tasks={project.tasks || []}

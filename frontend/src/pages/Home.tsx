@@ -5,6 +5,7 @@ import { projectService } from '@/services/projects';
 import ProjectList from '@/components/projects/ProjectList';
 import CreateProjectForm from '@/components/projects/CreateProjectForm';
 import { LoadingState } from '@/components/ui/spinner';
+import { Alert, AlertDescription, AlertIcon } from '@/components/ui/alert';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -54,9 +55,10 @@ export default function Home() {
       {isLoading && <LoadingState message="Loading projects..." />}
 
       {error && (
-        <div className="text-center py-12">
-          <p className="text-destructive">{error}</p>
-        </div>
+        <Alert variant="destructive">
+          <AlertIcon variant="destructive" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       {!isLoading && !error && (
