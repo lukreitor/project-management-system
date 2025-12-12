@@ -52,4 +52,17 @@ class ProjectController extends Controller
 
         return new ProjectResource($project);
     }
+
+    /**
+     * Delete a project and all its associated tasks.
+     *
+     * @param Project $project The project model instance (route model binding)
+     * @return JsonResponse Empty response with 204 status
+     */
+    public function destroy(Project $project): JsonResponse
+    {
+        $project->delete();
+
+        return response()->json(null, 204);
+    }
 }
